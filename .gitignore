@@ -1,5 +1,7 @@
 backup/
 
+slask/
+
 *.zip
 
 *.pbxproj
@@ -14,14 +16,14 @@ backup/
 
 *.plist
 
-pathfinder/binary_heap.cpp
-
-pathfinder/binary_heap.h
-
-pathfinder/binaryheap.cpp
-
-pathfinder/binaryheap.h
-
 *.1
 
+*.xccheckout
+
 pathfinder/NLTimerScoped.h
+
+pathfinder/intervalheap_template.h
+
+pathfinder/sma.cpp
+
+pathfinder/sma.h
