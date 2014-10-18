@@ -1,13 +1,12 @@
-#include "pathfinder.h"
+#include "astar.h"
 
-
-pathfinder::pathfinder()
+astar::astar()
 {}
 
-pathfinder::~pathfinder()
+astar::~astar()
 {}
 
-int pathfinder::FindPath(const int nStartX, const int nStartY, const int nTargetX, const int nTargetY, const unsigned char* pMap, const int nMapWidth, const int nMapHeight, int* pOutBuffer, const int nOutBufferSize )
+int astar::FindPath(const int nStartX, const int nStartY, const int nTargetX, const int nTargetY, const unsigned char* pMap, const int nMapWidth, const int nMapHeight, int* pOutBuffer, const int nOutBufferSize )
 {
     
     // if start and target positions are outside the map
@@ -31,8 +30,6 @@ int pathfinder::FindPath(const int nStartX, const int nStartY, const int nTarget
     const int open = 2;
     const int closed = open + 1;
     
-    //mutex_lock.lock();
-    
     clear();
     
     width = nMapWidth;
@@ -41,7 +38,7 @@ int pathfinder::FindPath(const int nStartX, const int nStartY, const int nTarget
     statusList.resize(width * height, 0); // list maintaining the open and closed status for nodes
     pListX.resize(width * height);   // parent list for X values
     pListY.resize(width * height);   // parent list for Y values
-    heap.reserve(width * height); // heap for keeping track of lowest F
+    heap.reserve(width * height); // heap for keeping track of lowest F, largest possible size
     
     node targetN(nTargetX, nTargetY, 0);
 
@@ -58,7 +55,7 @@ int pathfinder::FindPath(const int nStartX, const int nStartY, const int nTarget
         const int c_x = currNode.x;
         const int c_y = currNode.y;
         
-        if (currNode == targetN) {
+        if (currNode.x == targetN.x && currNode.y == targetN.y) {
             // reconstruct path
             setDebugPath(startN, currNode);
             return reconstruct(startN, currNode, nOutBufferSize, pOutBuffer);
@@ -126,8 +123,6 @@ int pathfinder::FindPath(const int nStartX, const int nStartY, const int nTarget
     }
     
     
-    //mutex_lock.unlock();
-    
     return -1;
     
 }
@@ -135,21 +130,21 @@ int pathfinder::FindPath(const int nStartX, const int nStartY, const int nTarget
 
 
 
-float pathfinder::distance(const node& s, const node& t) const
+float astar::distance(const node& s, const node& t) const
 {
     
-    int dx = abs(t.x - s.x), dy = abs(t.y - s.y);
+    float dx = abs((float)s.x - (float)t.x);
+    float dy = abs((float)s.y - (float)t.y);
     float estimate = abs(dx - dy) + sqrt(2) * std::min(dx, dy);
-    //float d = (abs(endNode->x - p->x) + abs(endNode->y - p->y));
+    //float manhattan = dx + dy;
     
     return estimate;
-    
 }
 
 
 
 
-int pathfinder::reconstruct(const node& s, const node& t, const int bufferSize, int* buffer)
+int astar::reconstruct(const node& s, const node& t, const int bufferSize, int* buffer)
 {
     int pathSize = 0;
     int pathX = t.x;
@@ -158,6 +153,7 @@ int pathfinder::reconstruct(const node& s, const node& t, const int bufferSize, 
     int sX = s.x;
     int sY = s.y;
     
+    // figure out the size of the path
     while (pathX != sX or pathY != sY) {
         ++pathSize;
         tempx = pListX[pathY * width + pathX];
@@ -175,7 +171,6 @@ int pathfinder::reconstruct(const node& s, const node& t, const int bufferSize, 
         pathY = t.y;
         tempx = 0;
         while (pathX != sX or pathY != sY) {
-            //std::cout<<"path x: "<<pathX<<" path y: "<<pathY<<std::endl;
             
             buffer[++i] = pathX;
             buffer[++i] = pathY;
@@ -192,13 +187,11 @@ int pathfinder::reconstruct(const node& s, const node& t, const int bufferSize, 
     
     std::cout<<"FINISH"<<std::endl;
     
-    //mutex_lock.unlock();
-    
     return pathSize;
     
 }
 
-void pathfinder::setDebugPath(const node &s, const node &t)
+void astar::setDebugPath(const node &s, const node &t)
 {
     debugPath.resize(width * height, 0);
 
@@ -219,7 +212,7 @@ void pathfinder::setDebugPath(const node &s, const node &t)
 
 }
 
-void pathfinder::clear()
+void astar::clear()
 {
     pListX.clear();
     pListX.clear();

@@ -1,11 +1,10 @@
-#ifndef __pathfinder__bheap__
-#define __pathfinder__bheap__
+#pragma once
 
 #include <iostream>
 #include <vector>
 
 template<class T = std::vector<int>, class Comparison = std::less<T> >
-class bheap {
+class binaryheap {
     
 private:
     std::vector<T> heap;
@@ -30,8 +29,8 @@ private:
     
 public:
     
-    bheap(){};
-    ~bheap(){};
+    binaryheap(){};
+    ~binaryheap(){};
     
     
     void push_back(const T& n)
@@ -90,5 +89,3 @@ public:
   
     
 };
-
-#endif /* defined(__pathfinder__bheap__) */
