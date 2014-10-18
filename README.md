@@ -1,4 +1,4 @@
 pathfinder
 ==========
 
-A* implementation using binary heaps.
+A* implementation using binary heaps and SMA* using interval heaps.
